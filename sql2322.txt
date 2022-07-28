@@ -1,0 +1,205 @@
+USE compras
+
+--MOSTRE O TOTAL DE COMPRAS
+SELECT SUM(total) AS 'TOTAL DE COMPRAS' FROM tab_pedidos;
+
+--INSIRA MAIS UMA COMPRA PARA O CLIENTE COM ID = 1 COM UME DATA DIFERENTE
+INSERT INTO tab_pedidos(id_cliente, data)
+VALUES
+(1,'2022-06-23')
+
+INSERT INTO tab_itens_pedidos(id_pedido, id_produto, qtde, subtotal)
+VALUES
+(3, 1, 2, 12.00), (3, 2, 2, 18.00), (3, 3, 2, 13.00);
+
+
+UPDATE tab_pedidos SET total = 43.00
+WHERE id_pedido = 3;
+
+--Mostre o total de compras pelas datas
+SELECT SUM(total) AS Total FROM tab_pedidos
+WHERE data = '2022-06-23';
+
+--insira mais uma venda
+INSERT INTO tab_pedidos(id_cliente, data) VALUES
+(1, '2022-06-23');
+
+--CONSULTE TODOS OS PEDIDOS 
+SELECT * FROM tab_pedidos;
+
+--REMOVER A ÚLTIMA COMPRAS
+DELETE FROM tab_pedidos
+WHERE id_pedido = 4;
+
+--Remover a conta com id = 3
+--REMOVER A ÚLTIMA COMPRAS
+DELETE FROM tab_pedidos
+WHERE id_pedido = 3;
+
+--ATENÇÃO: para remover itens existentes em tabelas pais
+--que contém itens na tabela filho, primeiro remove-se
+--os dados da tabela filho , para depois remover dados 
+--da tabela pai.
+
+--Consultar a tabela de itens 
+SELECT * FROM tab_itens_pedidos;
+
+--REMOVER OS ITENS DO PEDIDO COM O ID = 3
+DELETE FROM tab_itens_pedidos
+WHERE id_pedido = 3;
+
+
+--Remover a compra com o id = 3
+DELETE FROM tab_pedidos
+WHERE id_pedido = 3;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------***********************************************************************************************************************************************************************************
+
+CREATE DATABASE locacarros;
+USE locacarros;
+CREATE TABLE tab_fabricantes(
+	id_fabricante INT NOT NULL PRIMARY KEY IDENTITY,
+	nome VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE tab_carros(
+	id_carros INT NOT NULL PRIMARY KEY IDENTITY,
+	id_fabricante INT NOT NULL,
+	modelo VARCHAR(50) NOT NULL,
+	ano INT NOT NULL,
+	placa VARCHAR (10) not null,
+	cor VARCHAR (20) NOT NULL,
+	CONSTRAINT fk_id_fabricante
+	FOREIGN KEY (id_fabricante)
+	REFERENCES tab_fabricantes(id_fabricante)
+);
+
+
+create table tab_clientes(
+	id_cliente INT NOT NULL PRIMARY KEY IDENTITY,
+	nome VARCHAR(50) NOT NULL,
+	email VARCHAR(50) NOT NULL,
+	fone VARCHAR(15) NOT NULL
+);
+
+CREATE TABLE tab_locacoes(
+	id_locacao INT NOT NULL PRIMARY KEY IDENTITY,
+	id_cliente INT NOT NULL,
+	id_carro INT NOT NULL,
+	data_locacao DATE NOT NULL,
+	data_devolucao DATE,
+	valor_diaria DECIMAL(10,2) NOT NULL,
+	total DECIMAL(10,2)
+	CONSTRAINT fk_id_cliente FOREIGN KEY (id_cliente)
+	REFERENCES tab_clientes(id_cliente),
+	CONSTRAINT fk_id_carro FOREIGN KEY(id_carro)
+	REFERENCES tab_carros(id_carros)
+);
+
+--
+SELECT * FROM INFORMATION_SCHEMA.TABLES;
+
+
+--inserir os fabricantes
+INSERT INTO tab_fabricantes(nome)VALUES
+('Volkswagen'), ('Ford'), ('Fiat');
+
+
+--inserir 6 registros na tabela de carros
+INSERT INTO tab_carros(id_fabricante, modelo, ano, placa, cor)VALUES
+--(1, 'Golf GTI 2.0', 2019, 'ABC-123', 'Prata'),
+(1, 'Jetta 2.5 20V', 2020,'DEF-4321', 'Branco'),
+(2, 'F-250 XL 4.2 V6', 2020, 'KKK-7878', 'Preto'),
+(2, 'fusion SEL 3.0 V6', 2019, 'KKK-7878', 'Preto'),
+(3, 'Palio 1.8R 4P', 2019, 'TRE-1478', 'Cinza'),
+(3, 'Linea 1.9 LX 4P', 2020, 'BAB-3698', 'Prata');
+
+INSERT INTO tab_clientes(nome, email,fone) VALUES
+('João da silva', 'joão@gmail.com', '(11)91111-1111'),
+('Maria aparecida', 'cida@outlook.com', '(11)92222-2222'),
+('Karen de albuquerque', 'kare@hootmail.com', '(11)95555-5555'),
+('Pedro cardoso','pcardoso@uol.com', '(11)93333-3333'),
+('Simone Reis', 'simoreis@outlook.com', '(11)94444-4444');
+
+
+--Inserir 3 registros na tabela de locações
+INSERT INTO tab_locacoes(id_cliente, id_carro, data_locacao, valor_diaria)
+VALUES
+(1, 1, '2022-06-20', 250.00),
+(2, 2, '2022-06-20', 250.00),
+(3, 3, '2022-06-20', 400.00);
+
+
+--mostrar o conteudo de todas as tabelas
+SELECT * FROM tab_fabricantes;
+SELECT * FROM tab_carros;
+SELECT * FROM tab_clientes;
+SELECT * FROM tab_locacoes;
+
+
+--Atualizar o id da locação 3 devolução como devolução + 3 dias 
+UPDATE tab_locacoes SET data_devolucao = '2022-06-23'
+WHERE id_locacao = 3;
+--Atualizar o total do id da locação 3
+UPDATE tab_locacoes SET total = 1200.00
+WHERE id_locacao = 3;
+
+  
+--Atualizar o id da locação 2 devolução como devolução + 2 dias 
+UPDATE tab_locacoes SET data_devolucao = '2022-06-22'
+WHERE id_locacao = 2;
+--Atualizar o total do id da locação 2
+UPDATE tab_locacoes SET total = 500.00
+WHERE id_locacao = 2;
+
+--Atualizar o id da locação 1 devolução como devolução + 1 dias 
+UPDATE tab_locacoes SET data_devolucao = '2022-06-22'
+WHERE id_locacao = 1;
+--Atualizar o total do id da locação 1
+UPDATE tab_locacoes SET total = 250.00
+WHERE id_locacao = 1;
+  
+--Mostrar o nome do cliente, o modelo e placa do carro, as datas de locação e devolução e o total que foi pago do cliente de id = 1
+SELECT tab_clientes.nome AS Cliente,
+		tab_carros.modelo AS Carro,
+		tab_carros.placa AS Placa,
+		tab_locacoes.data_locacao AS 'Data de locação',
+		tab_locacoes.data_devolucao AS 'Data de devolução',
+		tab_locacoes.total AS total 
+		FROM tab_clientes INNER JOIN tab_locacoes
+		ON tab_clientes.id_cliente = tab_locacoes.id_cliente
+		INNER JOIN tab_carros
+		ON tab_locacoes.id_carro = tab_carros.id_carros
+		WHERE tab_clientes.id_cliente = 1;
+
+--Mostrar o nome do cliente, o modelo e placa do carro, as datas de locação e devolução e o total que 
+SELECT tab_clientes.nome AS Cliente,
+		tab_carros.modelo AS Carro,
+		tab_carros.placa AS Placa,
+		tab_locacoes.data_locacao AS 'Data de locação',
+		tab_locacoes.data_devolucao AS 'Data de devolução',
+		tab_locacoes.total AS total 
+		FROM tab_clientes INNER JOIN tab_locacoes
+		ON tab_clientes.id_cliente = tab_locacoes.id_cliente
+		INNER JOIN tab_carros
+		ON tab_locacoes.id_carro = tab_carros.id_carros
+		
